@@ -11,6 +11,16 @@ const TaskPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null); // Estado para armazenar a tarefa a ser editada
 
+  // Função para buscar as tarefas atualizadas
+  const updateTasks = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/tarefas');
+      setTasks(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar tarefas', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -37,6 +47,7 @@ const TaskPage = () => {
 
   const handleCloseForm = () => {
     setShowForm(false);
+    updateTasks(); // Atualiza a lista de tarefas após fechar o formulário
   };
 
   const handleDeleteTask = async (id) => {
@@ -77,7 +88,7 @@ const TaskPage = () => {
         </Button>
       </Box>
 
-      {showForm && <TaskForm task={taskToEdit} onClose={handleCloseForm} />}
+      {showForm && <TaskForm task={taskToEdit} onClose={handleCloseForm} onTaskAdded={updateTasks} />}
 
       {isLoading ? (
         <CircularProgress />
